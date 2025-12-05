@@ -1,5 +1,5 @@
 <script setup>
-import { ref, watch, onMounted } from 'vue';
+import { ref, watch, onMounted, provide } from 'vue';
 import { usePage } from '@inertiajs/vue3';
 import { useI18n } from 'vue-i18n';
 
@@ -7,8 +7,11 @@ const { t } = useI18n();
 const page = usePage();
 const toasts = ref([]);
 
-const addToast = (message, type = 'success') => {
+const addToast = (messageKey, type = 'success') => {
     const id = Date.now();
+    let message = messageKey;
+    if (messageKey === 'broker_created') message = t('toast.brokerCreated');
+    else if (messageKey === 'team_deleted') message = t('toast.teamDeleted');
     toasts.value.push({ id, message, type });
     setTimeout(() => removeToast(id), 5000);
 };
@@ -25,6 +28,14 @@ const getTranslatedMessage = (flash) => {
     }
     return null;
 };
+
+// Provide toast function to child components
+provide('toast', addToast);
+
+// Also expose via window for API-based components
+if (typeof window !== 'undefined') {
+    window.showToast = addToast;
+}
 
 watch(() => page.props.flash, (flash) => {
     if (flash?.success) {

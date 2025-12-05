@@ -1,7 +1,7 @@
 <script setup>
-import { watch } from 'vue';
-import { useForm } from '@inertiajs/vue3';
+import { ref, reactive, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
+import axios from 'axios';
 
 const { t } = useI18n();
 
@@ -10,26 +10,38 @@ const props = defineProps({
     teamId: Number,
 });
 
-const emit = defineEmits(['close']);
+const emit = defineEmits(['close', 'success']);
 
-const form = useForm({
+const form = reactive({
     name: '',
     email: '',
 });
 
+const errors = ref({});
+const processing = ref(false);
+
 watch(() => props.show, (newVal) => {
     if (newVal) {
-        form.reset();
-        form.clearErrors();
+        form.name = '';
+        form.email = '';
+        errors.value = {};
     }
 });
 
-const submit = () => {
-    form.post(route('brokers.store', props.teamId), {
-        onSuccess: () => {
-            emit('close');
-        },
-    });
+const submit = async () => {
+    processing.value = true;
+    errors.value = {};
+
+    try {
+        await axios.post(`/api/teams/${props.teamId}/brokers`, form);
+        emit('success');
+    } catch (error) {
+        if (error.response?.status === 422) {
+            errors.value = error.response.data.errors || {};
+        }
+    } finally {
+        processing.value = false;
+    }
 };
 </script>
 
@@ -62,7 +74,7 @@ const submit = () => {
                                 :placeholder="t('brokers.enterName')"
                                 required
                             />
-                            <p v-if="form.errors.name" class="mt-1 text-sm text-red-600">{{ form.errors.name }}</p>
+                            <p v-if="errors.name" class="mt-1 text-sm text-red-600">{{ errors.name[0] }}</p>
                         </div>
 
                         <div>
@@ -75,7 +87,7 @@ const submit = () => {
                                 :placeholder="t('brokers.enterEmail')"
                                 required
                             />
-                            <p v-if="form.errors.email" class="mt-1 text-sm text-red-600">{{ form.errors.email }}</p>
+                            <p v-if="errors.email" class="mt-1 text-sm text-red-600">{{ errors.email[0] }}</p>
                         </div>
 
                         <div class="flex justify-end gap-3 pt-4">
@@ -88,10 +100,10 @@ const submit = () => {
                             </button>
                             <button
                                 type="submit"
-                                :disabled="form.processing"
+                                :disabled="processing"
                                 class="inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2.5 text-sm font-medium text-white transition hover:bg-indigo-700 disabled:opacity-50"
                             >
-                                <svg v-if="form.processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
+                                <svg v-if="processing" class="size-4 animate-spin" fill="none" viewBox="0 0 24 24">
                                     <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
                                     <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                                 </svg>

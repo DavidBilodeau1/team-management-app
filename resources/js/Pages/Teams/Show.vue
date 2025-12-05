@@ -1,33 +1,75 @@
 <script setup>
-import { ref } from 'vue';
+import { ref, onMounted, inject } from 'vue';
 import { Head, Link, router } from '@inertiajs/vue3';
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
 import AddBrokerModal from '@/Components/AddBrokerModal.vue';
 import DeleteConfirmModal from '@/Components/DeleteConfirmModal.vue';
 import { useI18n } from 'vue-i18n';
+import axios from 'axios';
 
 const { t } = useI18n();
 
 const props = defineProps({
-    team: Object,
+    teamId: Number,
 });
 
+const team = ref(null);
+const loading = ref(true);
 const showAddBrokerModal = ref(false);
 const showDeleteModal = ref(false);
+const deleting = ref(false);
 
-const deleteTeam = () => {
-    router.delete(route('teams.destroy', props.team.id), {
-        onSuccess: () => {
-            showDeleteModal.value = false;
-        },
-    });
+const fetchTeam = async () => {
+    try {
+        const response = await axios.get(`/api/teams/${props.teamId}`);
+        team.value = response.data;
+    } finally {
+        loading.value = false;
+    }
+};
+
+onMounted(() => {
+    fetchTeam();
+});
+
+const deleteTeam = async () => {
+    deleting.value = true;
+    try {
+        await axios.delete(`/api/teams/${props.teamId}`);
+        showDeleteModal.value = false;
+        // Navigate and show toast after redirect
+        router.visit(route('teams.index'), {
+            onSuccess: () => {
+                if (window.showToast) {
+                    window.showToast('team_deleted');
+                }
+            },
+        });
+    } finally {
+        deleting.value = false;
+    }
+};
+
+const onBrokerAdded = () => {
+    showAddBrokerModal.value = false;
+    fetchTeam();
+    if (window.showToast) {
+        window.showToast('broker_created');
+    }
 };
 </script>
 
 <template>
-    <Head :title="team.name" />
+    <Head :title="team?.name || t('teams.title')" />
     <AuthenticatedLayout>
-        <div class="space-y-6">
+        <div v-if="loading" class="flex justify-center py-12">
+            <svg class="size-8 animate-spin text-indigo-600" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+            </svg>
+        </div>
+
+        <div v-else-if="team" class="space-y-6">
             <div>
                 <Link :href="route('teams.index')" class="inline-flex items-center gap-1 text-sm font-medium text-indigo-600 hover:text-indigo-800">
                     <svg class="size-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
@@ -47,7 +89,7 @@ const deleteTeam = () => {
                         </span>
                         <div>
                             <h1 class="text-2xl font-bold text-gray-900">{{ team.name }}</h1>
-                            <p class="text-sm text-gray-500">{{ t('teams.brokerCount', { count: team.brokers.length }) }}</p>
+                            <p class="text-sm text-gray-500">{{ t('teams.brokerCount', { count: team.brokers?.length || 0 }) }}</p>
                         </div>
                     </div>
                     <div class="flex gap-3">
@@ -75,7 +117,7 @@ const deleteTeam = () => {
                 <div class="p-6">
                     <h2 class="mb-4 text-lg font-semibold text-gray-900">{{ t('brokers.title') }}</h2>
 
-                    <div v-if="team.brokers.length > 0" class="overflow-hidden rounded-lg border border-gray-200">
+                    <div v-if="team.brokers?.length > 0" class="overflow-hidden rounded-lg border border-gray-200">
                         <table class="min-w-full divide-y divide-gray-200">
                             <thead class="bg-gray-50">
                                 <tr>
@@ -120,9 +162,11 @@ const deleteTeam = () => {
         </div>
 
         <AddBrokerModal
+            v-if="team"
             :show="showAddBrokerModal"
             :team-id="team.id"
             @close="showAddBrokerModal = false"
+            @success="onBrokerAdded"
         />
         <DeleteConfirmModal
             :show="showDeleteModal"
