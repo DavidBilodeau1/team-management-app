@@ -56,4 +56,8 @@ docker compose run --rm node
 echo ""
 echo "Setup complete!"
 echo "The application is now running at: http://localhost:8000"
+echo ""
+echo "Default credentials:"
+echo "  Email: admin@example.com"
+echo "  Password: password"
 

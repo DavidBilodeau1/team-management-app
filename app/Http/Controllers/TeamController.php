@@ -31,6 +31,6 @@ class TeamController extends Controller
         $team->brokers()->delete();
         $team->delete();
 
-        return redirect()->route('teams.index');
+        return redirect()->route('teams.index')->with('success', 'team_deleted');
     }
 }

@@ -1,0 +1,112 @@
+Test technique
+Full-stack Laravel & VueJS
+Objectifs et critères d’évaluation
+Ce test technique a pour objectif d’évaluer les compétences du candidat.e avant son
+embauche. La réponse soumise sera évaluée par l’équipe de Centiva et un retour sera
+donné au candidat.e, que le résultat soit positif ou négatif. Prendre note que la mise en
+contexte présente un scénario fictif et que la résultante du test ne sera utilisée qu’à des
+fins d’évaluation.
+Les compétences évaluées sont:
+● La qualité du code, en se basant sur les bonnes pratiques connues et valorisées
+dans l’industrie,
+● Le respect des consignes,
+● Le souci du détail.
+N’hésite pas à nous écrire en cours de route si tu as des questions.
+Explication de la tâche
+Dans le cadre du test technique, il sera attendu que le candidat.e:
+● Analyse les requis présentés dans le test;
+● Structure son développement de manière autonome;
+● Développe une petite application comprenant:
+○ Une API Laravel;
+○ Un frontend VueJS avec SSR.
+Dans le but de respecter les bonnes pratiques du développement logiciel, on t’invite à
+porter une attention particulière aux détails. Il y a plusieurs façons de parvenir à
+compléter les tâches demandées.
+Nous pensons que, grâce à ton expérience, tu pourras compléter ce projet démo en
+environ 3h-6h.
+Mise en contexte
+Chez Centiva, nous visons à faciliter et optimiser le travail des agences immobilières et
+de leurs courtiers. De manière fréquente un peu partout en Amérique du Nord, les
+courtiers s'organisent en équipes afin d'améliorer leur efficacité, de centraliser leurs
+ressources et d'offrir un meilleur service à leurs clients.
+Dans ce contexte, nous développerons dans les prochains mois une application pour
+répondre spécifiquement aux besoins de ces équipes, permettant l'attribution des
+tâches, le partage de références et le suivi des performances individuelles et
+collectives. Toutefois, avant d’ajouter toutes ces fonctionnalités, il sera nécessaire de
+développer un système de gestion des équipes et de leurs membres.
+Nous débuterons ainsi par développer une gestion administrative simple et intuitive
+des équipes et de leurs membres. Cette plateforme de gestion pourra être utilisée par
+les administrateurs Centiva ou les gestionnaires des agences. Elle facilitera l'ajout ou la
+suppression de courtiers dans les équipes existantes et offrira une vision claire de la
+structure des équipes.
+Requis techniques
+Le code final devra être mis en ligne (versionning sur GitHub, GitLab ou BitBucket),
+avec un historique de commits logiques et un fichier README.md qui explique
+l’architecture et les instructions d’installation locale.
+Backend (Laravel)
+Mise en place d’une application Laravel permettant l'accès à quatre endpoints GET, un
+endpoint POST et un endpoint DELETE.
+Nous ne nous attendons pas à ce que ces éléments soient présents :
+● authentification à l'API
+● traductions
+Gestion de données
+À partir d'une installation fraîche de Laravel à jour (incluant une connexion à une base
+de données), créer les migrations et les modèles pour contenir au minimum ces
+structures de données :
+● Équipes
+○ Nom
+● Courtiers
+○ Nom
+○ Courriel
+○ Équipe
+Les modèles devront supporter la suppression réversible (soft-delete); la liste des
+champs de chaque modèle ne se limitera donc pas à la liste ci-dessus.
+Données démo
+Insérer des données démo pour ces deux modèles dans la base de données, de
+manière programmatique.
+Endpoints GET
+Développer quatre endpoints GET, permettant de récupérer respectivement les
+équipes et les courtiers.
+● Équipes :
+○ Retourner toutes les équipes
+○ Pour chaque équipe, retourner le nom d'équipe et la liste des courtiers
+qu'elle contient
+● Équipe :
+○ Possibilité de passer un identifiant d'équipe en paramètre pour filtrer la
+recherche
+○ Pour chaque équipe, retourner le nom d'équipe et la liste des courtiers
+qu'elle contient
+● Courtiers :
+○ Retourner tous les courtiers
+○ Pour chaque courtier, savoir à quelle équipe il appartient
+● Courtier :
+○ Possibilité de passer un identifiant de courtier en paramètre pour filtrer la
+recherche
+○ Pour chaque courtier, savoir à quelle équipe il appartient
+Endpoint POST
+Créer un endpoint POST permettant de créer un nouveau courtier dans une équipe
+(incluant toutes les informations pertinentes).
+Endpoint DELETE
+Le endpoint DELETE devra permettre de soft-deleter une équipe. Lors de la
+suppression d'une équipe, tous les courtiers qui y sont rattachés devront être
+soft-deletés également.
+Frontend (VueJS)
+Mise en place d’une application Vuejs permettant de mettre à profit les APIs
+développés dans la portion backend du test technique. Il est attendu que l’application
+utilise le rendu côté serveur pour la récupération des données.
+Nous ne nous attendons pas à ce que ces éléments soient présents :
+● authentification des appels à l'API
+● traductions
+● style complet (il sera apprécié que le candidat.e mette en page le contenu de
+manière à faciliter la consultation des pages, mais l’évaluation ne portera pas sur
+l’intégration CSS à proprement parler)
+Pages à rendre disponibles
+Développer les pages suivantes:
+● Accueil permettant de lister toutes les équipes;
+● Page permettant de présenter une équipe spécifique et les courtiers qui y sont
+rattachés.
+Création d’un membre d’équipe
+Réfléchir à une méthode permettant, depuis l’application VueJS, d’ajouter un membre
+à une équipe existante.
+Suppression d’une équipe
+À partir de la page de profil d’une équipe, en permettre la suppression.

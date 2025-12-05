@@ -22,6 +22,6 @@ class BrokerController extends Controller
     {
         $team->brokers()->create($request->validated());
 
-        return redirect()->route('teams.show', $team);
+        return redirect()->route('teams.show', $team)->with('success', 'broker_created');
     }
 }

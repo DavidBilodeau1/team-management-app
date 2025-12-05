@@ -15,6 +15,11 @@ A Laravel 12 application for managing teams and brokers.
 
 The application will be available at http://localhost:8000
 
+## Default Credentials
+
+- Email: admin@example.com
+- Password: password
+
 ## Features
 
 - View all teams
